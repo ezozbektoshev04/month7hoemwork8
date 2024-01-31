@@ -10,27 +10,37 @@ const HomePage = () => {
     e.preventDefault();
     setStr(e.target.value.toLowerCase());
   };
+  const [inputLength, setInputLength] = useState(12);
 
   const submitData = (e) => {
     e.preventDefault();
     setInput(str);
   };
+  const showMore = () => {
+    setInputLength(inputLength + 12);
+  };
+  const showLess = () => {
+    setInputLength(inputLength - 12);
+  };
+
   const resetInput = () => {
     setInput("");
   };
   // console.log(input);
-  const fetchRepos = async (input) => {
+  const fetchRepos = async (input, inputLength) => {
     if (input !== "") {
-      const res = await fetch(`https://api.github.com/search/users?q=${input}`);
+      const res = await fetch(
+        `https://api.github.com/search/users?q=${input}&per_page=${inputLength}`
+      );
       const data = await res.json();
       setUsers(data.items);
     }
   };
   // console.log(users);
   useEffect(() => {
-    fetchRepos(input);
+    fetchRepos(input, inputLength);
     // console.log(input);
-  }, [input]);
+  }, [input, inputLength]);
 
   // console.log(str);
   return (
@@ -88,6 +98,44 @@ const HomePage = () => {
               </div>
             ))
           : null}
+      </div>
+      <div className="flex gap-4">
+        <button
+          onClick={showMore}
+          className={
+            users.length >= 12
+              ? " my-4 px-6 py-3 border-solid border-slate-300 border flex align-middle"
+              : "hidden "
+          }
+        >
+          Show More{" "}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+          >
+            <path d="M16.293 9.293 12 13.586 7.707 9.293l-1.414 1.414L12 16.414l5.707-5.707z"></path>
+          </svg>
+        </button>
+        <button
+          onClick={showLess}
+          className={
+            users.length >= 24
+              ? " my-4 px-6 py-3 border-solid border-slate-300 border flex align-middle"
+              : "hidden "
+          }
+        >
+          Show Less{" "}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+          >
+            <path d="m6.293 13.293 1.414 1.414L12 10.414l4.293 4.293 1.414-1.414L12 7.586z"></path>
+          </svg>
+        </button>
       </div>
     </div>
   );
